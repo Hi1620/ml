@@ -1,0 +1,50 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as mtp
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+#from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix,accuracy_score
+from sklearn.svm import SVC
+
+
+data=pd.read_csv('User_Data.csv')
+data
+x=data.iloc[:,[2,3]]
+y=data.iloc[:,4]
+
+x
+
+y
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=0)
+
+st=StandardScaler()
+x_train=st.fit_transform(x_train)
+x_test=st.transform(x_test)
+
+classifier=SVC(kernel='linear',random_state=0)
+classifier.fit(x_train,y_train)
+
+y_pred=classifier.predict(x_test)
+y_pred
+
+cm=confusion_matrix(y_test,y_pred)
+cm
+
+accuracy=accuracy_score(y_test,y_pred)
+accuracy
+
+from mlxtend.plotting import plot_decision_regions
+
+# Ensure y_train is an integer NumPy array
+y_train = np.array(y_train, dtype=np.int_)
+
+# Plot decision regions
+plot_decision_regions(x_train, y_train, clf=classifier, legend=5)
+mtp.xlabel("age")
+mtp.ylabel("estimated salary")
+mtp.title("knn (Training Set)")
+mtp.show()
+
+
