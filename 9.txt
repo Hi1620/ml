@@ -1,0 +1,44 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import DBSCAN
+from sklearn.preprocessing import StandardScaler, normalize
+from sklearn.decomposition import PCA
+
+M = pd.read_csv('sampleDataset.csv')
+M = M.drop('CUST_ID', axis=1)
+M.fillna(method='ffill', inplace=True)
+
+M_scaled = StandardScaler().fit_transform(M)
+M_normalized = normalize(M_scaled)
+M_normalized = pd.DataFrame(M_normalized)
+
+pcaFD = PCA(n_components=2)
+M_principal = pcaFD.fit_transform(M_normalized)
+M_principal = pd.DataFrame(M_principal, columns=['C1', 'C2'])
+
+db_default = DBSCAN(eps=0.0375, min_samples=3).fit(M_principal)
+labeling = db_default.labels_
+
+colours = {0: 'g', 1: 'k', 2: 'r', -1: 'b'}
+cvec = [colours[label] for label in labeling]
+
+plt.figure(figsize=(9, 9))
+plt.scatter(M_principal['C1'], M_principal['C2'], c=cvec)
+plt.title('DBSCAN Clustering Visualization')
+plt.xlabel('C1')
+plt.ylabel('C2')
+plt.show()
+
+db_default = DBSCAN(eps=0.0375, min_samples=50).fit(M_principal)
+labeling = db_default.labels_
+
+colours = {0: 'r', 1: 'g', 2: 'b', 3: 'c', 4: 'y', 5: 'm', -1: 'k'}
+cvec = [colours[label] for label in labeling]
+
+plt.figure(figsize=(9, 9))
+plt.scatter(M_principal['C1'], M_principal['C2'], c=cvec)
+plt.title('DBSCAN Clustering Visualization')
+plt.xlabel('C1')
+plt.ylabel('C2')
+plt.show()
